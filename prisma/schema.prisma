@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  college String?
+  graduation_year Int?
+  profile_picture_url String?
+  role Role @default(USER)
+  bookmark Bookmark[]
+  createdOpportunities Opportunity[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+enum Role{
+  USER
+  ADMIN
+}
+
+model Bookmark{
+  id String @id @default(uuid())
+  user User @relation(fields: [user_id], references: [id])
+  user_id String
+  opportunity Opportunity @relation(fields: [opportunity_id], references: [id])
+  opportunity_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([user_id, opportunity_id])
+  @@index([user_id])
+  @@index([opportunity_id])
+}
+
+model Opportunity{
+  id String @id @default(uuid())
+  title String
+  description String?
+  type Type
+  start_date DateTime?
+  deadline DateTime?
+  createdBy User @relation(fields: [created_by], references: [id])
+  created_by String
+  organization String?
+  location String?
+  apply_url String?
+  status Status @default(OPEN)
+  bookmark Bookmark[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([type])
+  @@index([organization])
+  @@index([status])
+  @@index([location])
+  @@index([start_date])
+  @@index([deadline])
+  @@index([created_by])
+}
+enum Type{
+  INTERNSHIP
+  SCHOLARSHIP
+  HACKATHON
+  COMPETITION
+  WORKSHOP
+}
+enum Status{
+  OPEN
+  CLOSED
+}
