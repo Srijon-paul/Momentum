@@ -5,22 +5,22 @@ import { generateAccessToken, generateRefreshToken } from "../../utils/generateT
 
 const registerUser = async (data) => {
 	const existingUser = await prisma.user.findUnique({
-		where:{
+		where: {
 			email: data.email
 		}
 	});
-	if(existingUser){
+	if (existingUser) {
 		throw new ApiError(409, "User already exists");
 	}
 
 	const hashedPassword = await bcrypt.hash(data.password, 10)
 	const user = await prisma.user.create({
-		data:{
+		data: {
 			name: data.name,
 			email: data.email,
 			password: hashedPassword
 		},
-		omit:{
+		omit: {
 			password: true
 		}
 	})
@@ -28,31 +28,31 @@ const registerUser = async (data) => {
 	return user;
 };
 
-const loginUser = async(data) => {
-	const {email, password} = data;
+const loginUser = async (data) => {
+	const { email, password } = data;
 	const user = await prisma.user.findUnique({
-		where:{
+		where: {
 			email: data.email
 		}
 	});
-	if(!user) throw new ApiError(401, "Invalid Credentials");
+	if (!user) throw new ApiError(401, "Invalid Credentials");
 
 	const hashedPassword = user.password;
-	
+
 	const isPasswordValid = await bcrypt.compare(password, hashedPassword);
-	if(!isPasswordValid) throw new ApiError(401, "Invalid Credentials!");
+	if (!isPasswordValid) throw new ApiError(401, "Invalid Credentials!");
 
 	const accessToken = await generateAccessToken(user.id);
 	const refreshToken = await generateRefreshToken(user.id);
 
 	const loggedinUser = await prisma.user.update({
-		where:{
+		where: {
 			id: user.id
 		},
-		data:{
+		data: {
 			refresh_token: refreshToken
 		},
-		omit:{
+		omit: {
 			password: true,
 			refresh_token: true
 		}
@@ -63,9 +63,61 @@ const loginUser = async(data) => {
 		accessToken,
 		refreshToken
 	}
+};
+
+const logoutUser = async (userId) => {
+	await prisma.user.update({
+		where: {
+			id: userId
+		},
+		data: {
+			refreshToken: null
+		}
+	});
+};
+
+const refreshAccessToken = async (data) => {
+	const incomingRefreshToken = data;
+	if (!incomingRefreshToken) throw new ApiError(401, "Unauthorized Request");
+
+	try {
+		const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+		const user = await prisma.user.findUnique({
+			where: {
+				id: decodedToken.id
+			}
+		});
+		if (!user) throw new ApiError(401, "Unauthorized Access");
+		if (incomingRefreshToken !== user.refreshToken) throw new ApiError(401, "Unauthorized Access");
+
+		const accessToken = await generateAccessToken(user.id);
+		const refreshToken = await generateRefreshToken(user.id);
+
+		await prisma.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				refresh_token: refreshToken
+			},
+			omit: {
+				password: true,
+				refresh_token: true
+			}
+		})
+
+		return {
+			accessToken,
+			refreshToken
+		}
+	} catch (error) {
+		throw new ApiError(401, "Unauthorized Access");
+	}
 }
 
-export{
+export {
 	registerUser,
-	loginUser
+	loginUser,
+	logoutUser,
+	refreshAccessToken
 }
