@@ -4,13 +4,17 @@ import { getAllUsers, getUserById } from "./admin.service.js";
 
 
 const getAllUsersControl = asyncHandler(async(req, res) => {
-	const page = Number(req.query.page) || 1;
-	const limit = Number(req.query.limit) || 5;
+	const page = Math.max(1, Number(req.query.page) || 1);
+	const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 5));
 	const skip = (page - 1) * limit;
-	const users = getAllUsers(limit, skip);
+	const search = req.query.search?.trim() || "";
+	const {users, totalUsers} = await getAllUsers(limit, skip, search);
 
 	return res.status(200).json(
-		new ApiResponse(200, users, "Users Fetched Successfully")
+		new ApiResponse(200, {
+			users, page, limit, totalUsers,
+			totalPages: Math.ceil(totalUsers / limit)
+		}, "Users Fetched Successfully")
 	);
 });
 
