@@ -51,15 +51,15 @@ model Bookmark{
 model Opportunity{
   id String @id @default(uuid())
   title String
-  description String?
+  description String
   type Type
   start_date DateTime?
-  deadline DateTime?
+  deadline DateTime
   createdBy User @relation(fields: [created_by], references: [id])
   created_by String
-  organization String?
+  organization String
   location String?
-  apply_url String?
+  apply_url String
   status Status @default(OPEN)
   bookmark Bookmark[]
   created_at DateTime @default(now())
