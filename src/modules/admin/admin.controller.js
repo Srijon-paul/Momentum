@@ -1,3 +1,4 @@
+import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { getAllUsers, getUserById } from "./admin.service.js";
@@ -20,6 +21,8 @@ const getAllUsersControl = asyncHandler(async(req, res) => {
 
 const getUsersByIdControl = asyncHandler(async(req, res) => {
 	const user = await getUserById(req.params.id);
+
+	if(!user) throw new ApiError(404, "User Not found");
 
 	return res.status(200).json(
 		new ApiResponse(200, users, "User Fetched Successfully")

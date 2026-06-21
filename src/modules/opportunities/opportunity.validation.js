@@ -117,7 +117,7 @@ const getAllOpportunitiesSchema = z.object({
 		.int()
 		.min(1)
 		.max(50)
-		.default(10),
+		.default(5),
 
 	search: z.string()
 		.trim()
