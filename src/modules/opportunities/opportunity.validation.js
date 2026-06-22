@@ -105,7 +105,7 @@ const updateOpportunitySchema = z.object({
 
 	deadline: z.coerce.date()
 		.optional()
-});
+}).partial();
 
 const getAllOpportunitiesSchema = z.object({
 	page: z.coerce.number()

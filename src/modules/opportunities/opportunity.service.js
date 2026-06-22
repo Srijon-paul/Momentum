@@ -30,7 +30,7 @@ const getAllOpportunity = async(limit, skip, type, status, search) => {
 			}
 		]
 	};
-	const opportunity = await prisma.opportunity.findMany({
+	const opportunities = await prisma.opportunity.findMany({
 		skip,
 		take: limit,
 		where,
@@ -41,7 +41,7 @@ const getAllOpportunity = async(limit, skip, type, status, search) => {
 	const totalOpportunities = await prisma.opportunity.count({
 		where
 	});
-	return { opportunity, totalOpportunities}
+	return { opportunities, totalOpportunities}
 };
 
 const getOpportunityById = async(opportunityId) => {
@@ -54,8 +54,44 @@ const getOpportunityById = async(opportunityId) => {
 	return opportunity;
 }
 
+const updateOpportunity = async(opportunityId, data) => {
+	const existingOpportunity = await prisma.opportunity.findUnique({
+		where: {
+			id: opportunityId
+		}
+	});
+	if(!existingOpportunity) throw new ApiError(404, "Opportunity not found");
+
+	const updatedOpportunity = await prisma.opportunity.update({
+		where:{
+			id: opportunityId
+		},
+		data
+	});
+	return data;
+}
+
+const deleteOpportunity = async(opportunityId) => {
+	const existingOpportunity = await prisma.opportunity.findUnique({
+		where:{
+			id: opportunityId
+		}
+	});
+	if(!existingOpportunity) throw new ApiError(404, "Opportunity not found");
+
+	const deletedOpportunity = await prisma.opportunity.delete({
+		where:{
+			id: opportunityId
+		}
+	});
+
+	return deleteOpportunity;
+}
+
 export {
 	createOpportunity,
 	getAllOpportunity,
-	getOpportunityById
+	getOpportunityById,
+	updateOpportunity,
+	deleteOpportunity
 }
