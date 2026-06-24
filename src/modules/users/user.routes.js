@@ -4,9 +4,9 @@ import { getCurrentUserControl, updateUserProfile } from "./user.controller.js";
 import { updateUserProfileSchema } from "./user.validation.js";
 import validate from "../../middlewares/validate.middleware.js";
 
-const userRoutes = Router();
+const userRouter = Router();
 
-userRoutes.route("/profile").get(verifyJWT, getCurrentUserControl);
-userRoutes.route("/profile").patch(verifyJWT, validate(updateUserProfileSchema), updateUserProfile);
+userRouter.route("/profile").get(verifyJWT, getCurrentUserControl);
+userRouter.route("/profile").patch(verifyJWT, validate(updateUserProfileSchema), updateUserProfile);
 
-export default userRoutes;
+export default userRouter;

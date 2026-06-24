@@ -2,3 +2,5 @@ node_modules
 %APPDATA%
 /generated/prisma
 .env
+dist
+coverage

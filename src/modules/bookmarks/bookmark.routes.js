@@ -4,14 +4,12 @@ import validate from "../../middlewares/validate.middleware.js";
 import { bookmarkSchema } from "./bookmark.validation.js";
 import { addBookmarkControl, getAllBookmarksControl, removeBookmarkControl } from "./bookmark.controller.js";
 
-const bookmarkRoutes = Router();
+const bookmarkRouter = Router();
 
-bookmarkRoutes.route("/bookmarks/:opportunityId").post(verifyJWT, validate(bookmarkSchema), addBookmarkControl);
+bookmarkRouter.route("/:opportunityId").post(verifyJWT, validate(bookmarkSchema), addBookmarkControl);
 
-bookmarkRoutes.route("/bookmarks").get(verifyJWT, getAllBookmarksControl);
+bookmarkRouter.route("/").get(verifyJWT, getAllBookmarksControl);
 
-bookmarkRoutes.route("/bookmarks/:opportunityId").delete(verifyJWT, validate(bookmarkSchema), removeBookmarkControl);
+bookmarkRouter.route("/:opportunityId").delete(verifyJWT, validate(bookmarkSchema), removeBookmarkControl);
 
-export {
-	bookmarkRoutes
-}
+export default bookmarkRouter;

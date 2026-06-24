@@ -1,5 +1,5 @@
-import { prisma } from "../../DB/prismaDb.config"
-import { ApiError } from "../../utils/ApiError";
+import { prisma } from "../../DB/prismaDb.config.js";
+import { ApiError } from "../../utils/ApiError.js";
 
 const createOpportunity = async(data) => {
 	const opportunity = await prisma.opportunity.create({

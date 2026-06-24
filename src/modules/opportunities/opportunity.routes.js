@@ -8,15 +8,15 @@ import { createOpportunityControl, deleteOpportunityControl, getAllOpportunityCo
 const opportunityRouter = Router();
 const adminOpportunityRouter = Router();
 
-adminOpportunityRouter.route("/opportunities").post(verifyJWT, authorize("ADMIN"), validate(createOpportunitySchema), createOpportunityControl);
+adminOpportunityRouter.route("/").post(verifyJWT, authorize("ADMIN"), validate(createOpportunitySchema), createOpportunityControl);
 
-adminOpportunityRouter.route("/opportunities/:id").patch(verifyJWT, authorize("ADMIN"), validate(opportunityIdSchema), validate(updateOpportunitySchema), updateOpportunityControl);
+adminOpportunityRouter.route("/:id").patch(verifyJWT, authorize("ADMIN"), validate(opportunityIdSchema), validate(updateOpportunitySchema), updateOpportunityControl);
 
-adminOpportunityRouter.route("/opportunities/:id").delete(verifyJWT, authorize("ADMIN"), validate(opportunityIdSchema), deleteOpportunityControl);
+adminOpportunityRouter.route("/:id").delete(verifyJWT, authorize("ADMIN"), validate(opportunityIdSchema), deleteOpportunityControl);
 
-opportunityRouter.route("/opportunities").get(verifyJWT, validate(getAllOpportunitiesSchema), getAllOpportunityControl);
+opportunityRouter.route("/").get(verifyJWT, validate(getAllOpportunitiesSchema), getAllOpportunityControl);
 
-opportunityRouter.route("/opportunities/:id").get(verifyJWT, validate(opportunityIdSchema), getOpportunityByIdControl);
+opportunityRouter.route("/:id").get(verifyJWT, validate(opportunityIdSchema), getOpportunityByIdControl);
 
 export {
 	opportunityRouter,

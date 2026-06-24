@@ -8,6 +8,4 @@ const adminRouter = Router();
 adminRouter.route("/users").get(verifyJWT, authorize("ADMIN"), getAllUsersControl);
 adminRouter.route("/users/:id").get(verifyJWT, authorize("ADMIN"), getUsersByIdControl);
 
-export {
-	adminRouter
-}
+export default adminRouter;

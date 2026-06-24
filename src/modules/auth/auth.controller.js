@@ -25,13 +25,13 @@ const login = asyncHandler(async (req, res) => {
 		.cookie("accessToken", result.accessToken,
 			{
 				...options,
-				maxAge: process.env.ACCESS_COOKIE_AGE
+				maxAge: Number(process.env.ACCESS_COOKIE_AGE)
 			}
 		)
 		.cookie("refreshToken", result.refreshToken,
 			{
 				...options,
-				maxAge: process.env.REFRESH_COOKIE_AGE
+				maxAge: Number(process.env.REFRESH_COOKIE_AGE)
 			}
 		)
 		.json(
