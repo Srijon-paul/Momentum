@@ -2,6 +2,7 @@ import { prisma } from "../../DB/prismaDb.config.js";
 import { ApiError } from "../../utils/ApiError.js";
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken } from "../../utils/generateTokens.js";
+import jwt from "jsonwebtoken";
 
 const registerUser = async (data) => {
 	const existingUser = await prisma.user.findUnique({
@@ -71,7 +72,7 @@ const logoutUser = async (userId) => {
 			id: userId
 		},
 		data: {
-			refreshToken: null
+			refresh_token: null
 		}
 	});
 };
@@ -88,7 +89,7 @@ const refreshAccessToken = async (data) => {
 			}
 		});
 		if (!user) throw new ApiError(401, "Unauthorized Access");
-		if (incomingRefreshToken !== user.refreshToken) throw new ApiError(401, "Unauthorized Access");
+		if (incomingRefreshToken !== user.refresh_token) throw new ApiError(401, "Invalid Refresh Token");
 
 		const accessToken = await generateAccessToken(user.id);
 		const refreshToken = await generateRefreshToken(user.id);
