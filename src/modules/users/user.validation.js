@@ -3,10 +3,6 @@ import { z } from "zod";
 const updateProfileSchema = z.object({
 	name: z.string().trim()
 	.min(3, "Name must be at least 3 characters long"),
-	bio: z.string().trim()
-	.min(3, "Minimum 3 characters are required!")
-	.max(200, "Maximum 200 characters exceeds!")
-	.nullable(),
 	profile_picture: z.string().trim()
 	.url("Invalid profile picture url")
 	.nullable(),

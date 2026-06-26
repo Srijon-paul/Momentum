@@ -22,7 +22,8 @@ const registerUser = async (data) => {
 			password: hashedPassword
 		},
 		omit: {
-			password: true
+			password: true,
+			refresh_token: true
 		}
 	})
 

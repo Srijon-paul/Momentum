@@ -25,7 +25,7 @@ const getUsersByIdControl = asyncHandler(async(req, res) => {
 	if(!user) throw new ApiError(404, "User Not found");
 
 	return res.status(200).json(
-		new ApiResponse(200, users, "User Fetched Successfully")
+		new ApiResponse(200, user, "User Fetched Successfully")
 	);
 })
 

@@ -13,6 +13,46 @@ const opportunityStatuses = [
 	"CLOSED"
 ];
 
+const parseSimpleDate = (value) => {
+	const match = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+
+	if (!match) {
+		return { ok: false, message: "Date must be in DD/MM/YYYY format" };
+	}
+
+	const day = Number(match[1]);
+	const month = Number(match[2]);
+	const year = Number(match[3]);
+	const parsedDate = new Date(year, month - 1, day);
+
+	if (
+		parsedDate.getFullYear() !== year ||
+		parsedDate.getMonth() !== month - 1 ||
+		parsedDate.getDate() !== day
+	) {
+		return { ok: false, message: "Invalid date" };
+	}
+
+	return { ok: true, value: parsedDate };
+};
+
+const simpleDateSchema = z.string()
+	.trim()
+	.superRefine((value, ctx) => {
+		const parsed = parseSimpleDate(value);
+
+		if (!parsed.ok) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: parsed.message
+			});
+		}
+	})
+	.transform((value) => {
+		const parsed = parseSimpleDate(value);
+		return parsed.value;
+	});
+
 const createOpportunitySchema = z.object({
 	title: z.string()
 		.trim()
@@ -45,13 +85,13 @@ const createOpportunitySchema = z.object({
 
 	apply_url: z.url("Invalid application link"),
 
-	start_date: z.coerce.date()
+	start_date: simpleDateSchema
 		.optional(),
 
-	deadline: z.coerce.date()
+	deadline: simpleDateSchema
 }).refine(
 	(data) => {
-		if(!data.start_date || !data.deadline) return true;
+		if (!data.start_date || !data.deadline) return true;
 		return data.deadline > data.start_date;
 	},
 	{
@@ -60,7 +100,7 @@ const createOpportunitySchema = z.object({
 	}
 ).refine(
 	(data) => {
-		if(!data.start_date) return true;
+		if (!data.start_date) return true;
 		return data.start_date >= new Date();
 	},
 	{
@@ -100,10 +140,10 @@ const updateOpportunitySchema = z.object({
 	apply_url: z.url()
 		.optional(),
 
-	start_date: z.coerce.date()
+	start_date: simpleDateSchema
 		.optional(),
 
-	deadline: z.coerce.date()
+	deadline: simpleDateSchema
 		.optional()
 }).partial();
 
