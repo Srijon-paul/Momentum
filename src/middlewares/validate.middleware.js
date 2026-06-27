@@ -11,11 +11,12 @@ const validate = (schema) => {
                 }
             }
 
-            const candidates = [
-                payload,
-                { body: payload, params: req.params, query: req.query },
-                { ...payload, params: req.params, query: req.query }
-            ];
+            const combinedCandidate = { body: payload, params: req.params, query: req.query };
+            const mergedCandidate = { ...payload, params: req.params, query: req.query };
+
+            const candidates = req.method === "GET"
+                ? [req.query, req.params, payload, req.body, combinedCandidate, mergedCandidate]
+                : [payload, req.body, req.params, req.query, combinedCandidate, mergedCandidate];
 
             let lastError = null;
 

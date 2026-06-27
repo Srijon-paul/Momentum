@@ -100,8 +100,21 @@ const createOpportunitySchema = z.object({
 	}
 ).refine(
 	(data) => {
+		if (!data.deadline) return true;
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		return data.deadline >= today;
+	},
+	{
+		message: "Deadline cannot be in the past",
+		path: ["deadline"]
+	}
+).refine(
+	(data) => {
 		if (!data.start_date) return true;
-		return data.start_date >= new Date();
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		return data.start_date >= today;
 	},
 	{
 		message: "Start date cannot be in the past",
@@ -145,7 +158,39 @@ const updateOpportunitySchema = z.object({
 
 	deadline: simpleDateSchema
 		.optional()
-}).partial();
+}).partial()
+	.refine(
+		(data) => {
+			if (!data.start_date || !data.deadline) return true;
+			return data.deadline > data.start_date;
+		},
+		{
+			message: "Deadline must be after start date",
+			path: ["deadline"]
+		}
+	).refine(
+		(data) => {
+			if (!data.deadline) return true;
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+			return data.deadline >= today;
+		},
+		{
+			message: "Deadline cannot be in the past",
+			path: ["deadline"]
+		}
+	).refine(
+		(data) => {
+			if (!data.start_date) return true;
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+			return data.start_date >= today;
+		},
+		{
+			message: "Start date cannot be in the past",
+			path: ["start_date"]
+		}
+	);
 
 const getAllOpportunitiesSchema = z.object({
 	page: z.coerce.number()
