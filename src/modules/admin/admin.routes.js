@@ -5,7 +5,88 @@ import { getAllUsersControl, getUsersByIdControl } from "./admin.controller.js";
 
 const adminRouter = Router();
 
+/**
+ * @swagger
+ * /admin/users:
+ *   get:
+ *     summary: Retrieve all users
+ *     description: Get a list of all registered users in the system. Requires admin privileges.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved all users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 200
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *                 message:
+ *                   type: string
+ *                   example: "Users fetched successfully"
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 adminRouter.route("/users").get(verifyJWT, authorize("ADMIN"), getAllUsersControl);
+
+/**
+ * @swagger
+ * /admin/users/{id}:
+ *   get:
+ *     summary: Retrieve a specific user by ID
+ *     description: Get detailed information about a specific user. Requires admin privileges.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The unique identifier of the user
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 200
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *                 message:
+ *                   type: string
+ *                   example: "User fetched successfully"
+ *       400:
+ *         $ref: '#/components/responses/BadRequestError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
 adminRouter.route("/users/:id").get(verifyJWT, authorize("ADMIN"), getUsersByIdControl);
 
 export default adminRouter;
