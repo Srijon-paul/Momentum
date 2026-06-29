@@ -18,14 +18,18 @@ app.use(express.json({
 }));
 app.use(cookieparser());
 
+
 import authRouter from "./modules/auth/auth.routes.js";
 import userRouter from "./modules/users/user.routes.js";
 import { opportunityRouter, adminOpportunityRouter } from "./modules/opportunities/opportunity.routes.js";
 import bookmarkRouter from "./modules/bookmarks/bookmark.routes.js";
 import adminRouter from "./modules/admin/admin.routes.js";
+import { serve, setup } from "swagger-ui-express";
+import swaggerSpec from "./docs/swagger.js";
 
 const apiVersion = "/api/v1";
 
+app.use(`${apiVersion}/api-docs`, serve, setup(swaggerSpec));
 app.use(`${apiVersion}/auth`, authRouter);
 app.use(`${apiVersion}/admin`, adminRouter)
 app.use(`${apiVersion}/users`, userRouter);

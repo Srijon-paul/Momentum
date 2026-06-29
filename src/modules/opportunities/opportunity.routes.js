@@ -10,7 +10,7 @@ const adminOpportunityRouter = Router();
 
 /**
  * @swagger
- * /opportunities/admin:
+ * /admin/opportunities:
  *   post:
  *     summary: Create a new opportunity
  *     description: Create a new opportunity listing. Requires admin privileges. Deadline must be after start date and not in the past.
@@ -53,7 +53,7 @@ adminOpportunityRouter.route("/").post(verifyJWT, authorize("ADMIN"), validate(c
 
 /**
  * @swagger
- * /opportunities/admin/{id}:
+ * /admin/opportunities/{id}:
  *   patch:
  *     summary: Update an existing opportunity
  *     description: Update opportunity details. Requires admin privileges. All fields are optional.
@@ -106,7 +106,7 @@ adminOpportunityRouter.route("/:id").patch(verifyJWT, authorize("ADMIN"), valida
 
 /**
  * @swagger
- * /opportunities/admin/{id}:
+ * /admin/opportunities/{id}:
  *   delete:
  *     summary: Delete an opportunity
  *     description: Remove an opportunity listing from the system. Requires admin privileges.
