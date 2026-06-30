@@ -56,7 +56,7 @@ adminOpportunityRouter.route("/").post(verifyJWT, authorize("ADMIN"), validate(c
  * /admin/opportunities/{id}:
  *   patch:
  *     summary: Update an existing opportunity
- *     description: Update opportunity details. Requires admin privileges. All fields are optional.
+ *     description: "Update opportunity details. Requires admin privileges. All fields are optional, but if provided they must follow the same rules as create: title 3-150 chars, description 20-5000 chars, organization 2-100 chars, valid type/status values, valid apply_url, dates in DD/MM/YYYY, deadline after start_date, and no past dates."
  *     tags:
  *       - Opportunities (Admin)
  *     security:

@@ -110,8 +110,7 @@ const options = {
 						location: {
 							type: "string",
 							maxLength: 100,
-							nullable: true,
-							description: "Location of the opportunity",
+							description: "Optional location of the opportunity",
 							example: "San Francisco, CA"
 						},
 						apply_url: {
@@ -122,11 +121,13 @@ const options = {
 						},
 						start_date: {
 							type: "string",
-							description: "Start date in DD/MM/YYYY format",
+							pattern: "^\\d{1,2}/\\d{1,2}/\\d{4}$",
+							description: "Start date in DD/MM/YYYY format. Must not be in the past",
 							example: "15/06/2026"
 						},
 						deadline: {
 							type: "string",
+							pattern: "^\\d{1,2}/\\d{1,2}/\\d{4}$",
 							description: "Deadline in DD/MM/YYYY format. Must be after start_date and not in the past",
 							example: "30/06/2026"
 						}
@@ -183,12 +184,14 @@ const options = {
 						},
 						start_date: {
 							type: "string",
-							description: "Start date in DD/MM/YYYY format",
+							pattern: "^\\d{1,2}/\\d{1,2}/\\d{4}$",
+							description: "Optional start date in DD/MM/YYYY format. If provided, it must not be in the past",
 							example: "15/06/2026"
 						},
 						deadline: {
 							type: "string",
-							description: "Deadline in DD/MM/YYYY format",
+							pattern: "^\\d{1,2}/\\d{1,2}/\\d{4}$",
+							description: "Optional deadline in DD/MM/YYYY format. If provided, it must be after start_date and not in the past",
 							example: "30/06/2026"
 						}
 					}
@@ -202,7 +205,7 @@ const options = {
 							description: "User's full name",
 							example: "Srijon Paul"
 						},
-						profile_picture: {
+						profile_picture_url: {
 							type: "string",
 							format: "uri",
 							nullable: true,
