@@ -1,13 +1,25 @@
 import express from "express";
 import cors from "cors";
 import cookieparser from "cookie-parser";
+import helmet from "helmet";
 import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
+const allowedOrigins = process.env.CORS_ORIGINS.split(",").map(orig => orig.trim());
+
+app.use(helmet());
 
 app.use(cors({
-	origin: process.env.CORS_ORIGIN,
-	credentials: true
+	origin(origin, callback){ // !origin allowing request which are not from browser since they do not contain origin header and if contain they pass through the allowedOrigins to check then return a function which simply throws errors or allowed to continue the flow.
+		if(!origin || allowedOrigins.includes(origin)){
+			return callback(null, true);
+		}
+		callback(new ApiError(403, "Origin not allowed in CORS"))
+	},
+	credentials: true, // for browsers to manage cookie headers with cors
+	methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], // only this methods will be allowed by cors
+	allowedHeaders: ["Content-Type", "Authorization"], // only specific request headers are accepted rather than all
+	maxAge: 86400 // pre-flight requests are cached for 24hours to reduce unnecessary traffic
 }));
 app.use(express.urlencoded({
 	limit: "16kb",
@@ -26,6 +38,7 @@ import bookmarkRouter from "./modules/bookmarks/bookmark.routes.js";
 import adminRouter from "./modules/admin/admin.routes.js";
 import { serve, setup } from "swagger-ui-express";
 import swaggerSpec from "./docs/swagger.js";
+import { ApiError } from "./utils/ApiError.js";
 
 const apiVersion = "/api/v1";
 
