@@ -3,6 +3,7 @@ import { verifyJWT } from "../../middlewares/auth.middleware.js";
 import { getCurrentUserControl, updateUserProfile } from "./user.controller.js";
 import { updateUserProfileSchema } from "./user.validation.js";
 import validate from "../../middlewares/validate.middleware.js";
+import { readLimiter, writeLimiter } from "../../middlewares/rateLimit.middleware.js";
 
 const userRouter = Router();
 
@@ -37,7 +38,7 @@ const userRouter = Router();
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-userRouter.route("/profile").get(verifyJWT, getCurrentUserControl);
+userRouter.route("/profile").get(verifyJWT, readLimiter, getCurrentUserControl);
 
 /**
  * @swagger
@@ -78,6 +79,6 @@ userRouter.route("/profile").get(verifyJWT, getCurrentUserControl);
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-userRouter.route("/profile").patch(verifyJWT, validate(updateUserProfileSchema), updateUserProfile);
+userRouter.route("/profile").patch(verifyJWT, writeLimiter, validate(updateUserProfileSchema), updateUserProfile);
 
 export default userRouter;

@@ -2,7 +2,10 @@ import express from "express";
 import cors from "cors";
 import cookieparser from "cookie-parser";
 import helmet from "helmet";
+import hpp from "hpp";
 import { errorHandler } from "./middlewares/error.middleware.js";
+import { speedLimiter } from "./middlewares/speedLimiter.middleware.js";
+import { globalLimiter } from "./middlewares/rateLimit.middleware.js";
 
 const app = express();
 const allowedOrigins = process.env.CORS_ORIGINS.split(",").map(orig => orig.trim());
@@ -21,6 +24,12 @@ app.use(cors({
 	allowedHeaders: ["Content-Type", "Authorization"], // only specific request headers are accepted rather than all
 	maxAge: 86400 // pre-flight requests are cached for 24hours to reduce unnecessary traffic
 }));
+
+app.use(speedLimiter);
+app.use(globalLimiter);
+
+app.use(hpp());
+
 app.use(express.urlencoded({
 	limit: "16kb",
 	extended: true

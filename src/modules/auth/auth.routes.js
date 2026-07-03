@@ -3,6 +3,7 @@ import validate from "../../middlewares/validate.middleware.js";
 import { registerSchema } from "./auth.validation.js";
 import { login, refreshAccessTokenControl, register, logout } from "./auth.controller.js";
 import { verifyJWT } from "../../middlewares/auth.middleware.js";
+import { authLimiter } from "../../middlewares/rateLimit.middleware.js";
 
 const authRouter = Router();
 
@@ -47,7 +48,7 @@ const authRouter = Router();
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-authRouter.route("/register").post(validate(registerSchema), register);
+authRouter.route("/register").post(authLimiter, validate(registerSchema), register);
 
 /**
  * @swagger
@@ -90,7 +91,7 @@ authRouter.route("/register").post(validate(registerSchema), register);
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-authRouter.route("/login").post(login);
+authRouter.route("/login").post(authLimiter, login);
 
 /**
  * @swagger
@@ -162,6 +163,6 @@ authRouter.route("/logout").post(verifyJWT, logout);
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-authRouter.route("/refresh-token").post(refreshAccessTokenControl);
+authRouter.route("/refresh-token").post(authLimiter, refreshAccessTokenControl);
 
 export default authRouter;
