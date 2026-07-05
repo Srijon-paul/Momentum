@@ -3,6 +3,7 @@ import { ApiError } from "../../utils/ApiError.js";
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken } from "../../utils/generateTokens.js";
 import jwt from "jsonwebtoken";
+import logger from "../../utils/logger.js";
 
 const registerUser = async (data) => {
 	const existingUser = await prisma.user.findUnique({
@@ -26,7 +27,7 @@ const registerUser = async (data) => {
 			refresh_token: true
 		}
 	})
-
+	logger.info(`New User Registered ${user.email}`);
 	return user;
 };
 
@@ -37,13 +38,16 @@ const loginUser = async (data) => {
 			email: data.email
 		}
 	});
-	if (!user) throw new ApiError(401, "Invalid Credentials");
-
+	if (!user){
+		logger.warn(`Failed login attempt for ${email}`);
+		throw new ApiError(401, "Invalid Credentials");
+	}	
 	const hashedPassword = user.password;
-
 	const isPasswordValid = await bcrypt.compare(password, hashedPassword);
-	if (!isPasswordValid) throw new ApiError(401, "Invalid Credentials!");
-
+	if (!isPasswordValid){
+		logger.warn(`Failed login attempt for ${user.email}`);
+		throw new ApiError(401, "Invalid Credentials!");
+	}
 	const accessToken = await generateAccessToken(user.id);
 	const refreshToken = await generateRefreshToken(user.id);
 
@@ -59,6 +63,8 @@ const loginUser = async (data) => {
 			refresh_token: true
 		}
 	})
+
+	logger.info(`User ${user.email} logged in`);
 
 	return {
 		user: loggedinUser,
@@ -76,6 +82,7 @@ const logoutUser = async (userId) => {
 			refresh_token: null
 		}
 	});
+	logger.info(`User ${userId} logged out successfully`);
 };
 
 const refreshAccessToken = async (data) => {
@@ -89,8 +96,14 @@ const refreshAccessToken = async (data) => {
 				id: decodedToken.id
 			}
 		});
-		if (!user) throw new ApiError(401, "Unauthorized Access");
-		if (incomingRefreshToken !== user.refresh_token) throw new ApiError(401, "Invalid Refresh Token");
+		if (!user){ 
+			logger.warn(`Unauthorize access with refresh token for userId ${decodedToken.id}`);
+			throw new ApiError(401, "Unauthorized Access");
+		}
+		if (incomingRefreshToken !== user.refresh_token){
+			logger.warn(`Invalid refresh token for userId ${user.id}`);
+			throw new ApiError(401, "Invalid Refresh Token");
+		}
 
 		const accessToken = await generateAccessToken(user.id);
 		const refreshToken = await generateRefreshToken(user.id);
@@ -113,6 +126,7 @@ const refreshAccessToken = async (data) => {
 			refreshToken
 		}
 	} catch (error) {
+		logger.error(error);
 		throw new ApiError(401, "Unauthorized Access");
 	}
 }

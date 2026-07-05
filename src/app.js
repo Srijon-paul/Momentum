@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieparser from "cookie-parser";
 import helmet from "helmet";
 import hpp from "hpp";
+import morgan from "morgan";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { speedLimiter } from "./middlewares/speedLimiter.middleware.js";
 import { globalLimiter } from "./middlewares/rateLimit.middleware.js";
@@ -27,6 +28,8 @@ app.use(cors({
 
 app.use(speedLimiter);
 app.use(globalLimiter);
+
+app.use(morgan("dev"));
 
 app.use(hpp());
 
