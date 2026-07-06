@@ -41,7 +41,7 @@ const login = asyncHandler(async (req, res) => {
 
 const logout = asyncHandler(async (req, res) => {
 	await logoutUser(req.user.id);
-
+	
 	return res.status(200)
 		.clearCookie("accessToken", options)
 		.clearCookie("refreshToken", options)

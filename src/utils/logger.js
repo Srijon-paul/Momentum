@@ -1,18 +1,54 @@
 import winston from "winston";
+import path from "path";
+
+const { combine, timestamp, errors, json, printf, colorize } = winston.format;
+
+const isProduction = process.env.NODE_ENV === "production";
+
+// Development format
+const devFormat = combine(
+    colorize(),
+    timestamp({
+        format: "YYYY-MM-DD HH:mm:ss",
+    }),
+    errors({ stack: true }),
+    printf(({ timestamp, level, message, stack }) => {
+        return `${timestamp} [${level}] ${stack || message}`
+    })
+);
+
+// Production format
+const prodFormat = combine(
+    timestamp(),
+    errors({ stack: true }),
+    json()
+);
 
 const logger = winston.createLogger({
-    level: "info", // severity level for logging including warning and error
-
-    format: winston.format.combine(
-        winston.format.timestamp(), // add current time of the logging event
-        winston.format.errors({ stack: true }), // full error stack trace
-        winston.format.json(), // overall json format rather than plain text
-    ),
-
+    level: process.env.LOG_LEVEL || "info",
+    defaultMeta: {
+        service: "momentum-opportunity-hub",
+        environment: process.env.NODE_ENV || "development",
+    },
     transports: [
-        new winston.transports.Console() // destination for logging the events
-		// we can add files where logs can be saved
-    ]
+        // Console Transport
+        new winston.transports.Console({
+            format: isProduction ? prodFormat : devFormat,
+        }),
+
+        // Combined Log File
+        new winston.transports.File({
+            filename: path.join("logs", "combined.log"),
+            format: prodFormat,
+        }),
+
+        // Error Log File
+        new winston.transports.File({
+            filename: path.join("logs", "error.log"),
+            level: "error",
+            format: prodFormat,
+        }),
+    ],
 });
 
 export default logger;

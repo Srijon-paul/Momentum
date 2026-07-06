@@ -1,5 +1,6 @@
 import { prisma } from "../../DB/prismaDb.config.js";
 import { ApiError } from "../../utils/ApiError.js";
+import logger from "../../utils/logger.js";
 
 const createOpportunity = async (data, userId) => {
 	const opportunity = await prisma.opportunity.create({
@@ -12,7 +13,7 @@ const createOpportunity = async (data, userId) => {
 			}
 		}
 	});
-
+	logger.info(`Opportunity ${opportunity.id} created by ${userId}`);
 	return opportunity;
 };
 
@@ -81,6 +82,7 @@ const updateOpportunity = async (opportunityId, data) => {
 		},
 		data
 	});
+	logger.info(`Opportunity ${opportunityId} updated`);
 	return data;
 }
 
@@ -97,7 +99,7 @@ const deleteOpportunity = async (opportunityId) => {
 			id: opportunityId
 		}
 	});
-
+	logger.info(`Opportunity ${opportunityId} deleted`);
 	return deleteOpportunity;
 }
 

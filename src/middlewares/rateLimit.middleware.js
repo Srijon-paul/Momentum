@@ -8,6 +8,7 @@ const createLimiter = (windowMs, limit, message) => {
 		standardHeaders: true,
 		legacyHeaders: false,
 		handler: (req, res, next) => {
+			logger.warn(`${message} for ${req.user.id}`);
 			next(new ApiError(429, message));
 		}
 	});

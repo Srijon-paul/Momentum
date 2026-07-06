@@ -27,7 +27,7 @@ const registerUser = async (data) => {
 			refresh_token: true
 		}
 	})
-	logger.info(`New User Registered ${user.email}`);
+	logger.info(`New User Registered ${user.id}`);
 	return user;
 };
 
@@ -39,13 +39,13 @@ const loginUser = async (data) => {
 		}
 	});
 	if (!user){
-		logger.warn(`Failed login attempt for ${email}`);
+		logger.warn(`Failed login attempt for user: ${email}`);
 		throw new ApiError(401, "Invalid Credentials");
 	}	
 	const hashedPassword = user.password;
 	const isPasswordValid = await bcrypt.compare(password, hashedPassword);
 	if (!isPasswordValid){
-		logger.warn(`Failed login attempt for ${user.email}`);
+		logger.warn(`Failed login attempt for user: ${user.id}`);
 		throw new ApiError(401, "Invalid Credentials!");
 	}
 	const accessToken = await generateAccessToken(user.id);
@@ -64,7 +64,7 @@ const loginUser = async (data) => {
 		}
 	})
 
-	logger.info(`User ${user.email} logged in`);
+	logger.info(`User: ${user.id} logged in`);
 
 	return {
 		user: loggedinUser,

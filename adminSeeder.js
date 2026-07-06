@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { prisma } from "./src/DB/prismaDb.config.js";
+import logger from "./src/utils/logger.js";
 
 async function main() {
     const adminExists = await prisma.user.findUnique({
@@ -18,7 +19,7 @@ async function main() {
         10
     );
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
         data: {
             name: process.env.ADMIN_NAME,
             email: process.env.ADMIN_EMAIL,
@@ -26,10 +27,9 @@ async function main() {
             role: "ADMIN"
         }
     });
-
-    console.log("Admin created");
+    logger.info(`Admin created: ${user.id}`);
 }
 
 main()
-    .catch(console.error)
+    .catch(logger.error)
     .finally(() => prisma.$disconnect());
