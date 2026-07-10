@@ -1,5 +1,6 @@
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import logger from "../../utils/logger.js";
 import { registerUser, loginUser, refreshAccessToken, logoutUser } from "./auth.service.js";
 
 // cookie options

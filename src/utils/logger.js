@@ -1,4 +1,5 @@
 import winston from "winston";
+import DailyRotateFile from "winston-daily-rotate-file";
 import path from "path";
 
 const { combine, timestamp, errors, json, printf, colorize } = winston.format;
@@ -25,7 +26,8 @@ const prodFormat = combine(
 );
 
 const logger = winston.createLogger({
-    level: process.env.LOG_LEVEL || "info",
+    levels: winston.config.npm.levels,
+    level: process.env.LOG_LEVEL || "http",
     defaultMeta: {
         service: "momentum-opportunity-hub",
         environment: process.env.NODE_ENV || "development",
@@ -36,18 +38,32 @@ const logger = winston.createLogger({
             format: isProduction ? prodFormat : devFormat,
         }),
 
-        // Combined Log File
-        new winston.transports.File({
-            filename: path.join("logs", "combined.log"),
+        // Combined Log File with rotation
+        new DailyRotateFile({
+            dirname: path.join("logs"),
+            filename: "application-%DATE%.log",
+            datePattern: "YYYY-MM-DD",
+            zippedArchive: true,
+            maxSize: "20m",
+            maxFiles: "14d",
+            handleExceptions: true,
+            handleRejections: true,
             format: prodFormat,
         }),
 
-        // Error Log File
-        new winston.transports.File({
-            filename: path.join("logs", "error.log"),
+        // Error Log File with rotation
+        new DailyRotateFile({
+            dirname: path.join("logs"),
+            filename: "error-%DATE%.log",
             level: "error",
+            datePattern: "YYYY-MM-DD",
+            zippedArchive: true,
+            maxSize: "20m",
+            maxFiles: "30d",
+            handleExceptions: true,
+            handleRejections: true,
             format: prodFormat,
-        }),
+        })
     ],
 });
 

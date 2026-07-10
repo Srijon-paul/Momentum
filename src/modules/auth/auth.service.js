@@ -120,7 +120,7 @@ const refreshAccessToken = async (data) => {
 				refresh_token: true
 			}
 		})
-
+		logger.info(`Refresh Token changed for User: ${user.id}`)
 		return {
 			accessToken,
 			refreshToken
