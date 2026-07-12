@@ -9,6 +9,16 @@ import { speedLimiter } from "./middlewares/speedLimiter.middleware.js";
 import { globalLimiter } from "./middlewares/rateLimit.middleware.js";
 import stream from "./utils/morganStream.js";
 
+import authRouter from "./modules/auth/auth.routes.js";
+import userRouter from "./modules/users/user.routes.js";
+import { opportunityRouter, adminOpportunityRouter } from "./modules/opportunities/opportunity.routes.js";
+import bookmarkRouter from "./modules/bookmarks/bookmark.routes.js";
+import adminRouter from "./modules/admin/admin.routes.js";
+import { serve, setup } from "swagger-ui-express";
+import swaggerSpec from "./docs/swagger.js";
+import { ApiError } from "./utils/ApiError.js";
+import { ApiResponse } from "./utils/ApiResponse.js";
+
 const app = express();
 const allowedOrigins = process.env.CORS_ORIGINS.split(",").map(orig => orig.trim());
 
@@ -43,17 +53,14 @@ app.use(express.json({
 }));
 app.use(cookieparser());
 
-
-import authRouter from "./modules/auth/auth.routes.js";
-import userRouter from "./modules/users/user.routes.js";
-import { opportunityRouter, adminOpportunityRouter } from "./modules/opportunities/opportunity.routes.js";
-import bookmarkRouter from "./modules/bookmarks/bookmark.routes.js";
-import adminRouter from "./modules/admin/admin.routes.js";
-import { serve, setup } from "swagger-ui-express";
-import swaggerSpec from "./docs/swagger.js";
-import { ApiError } from "./utils/ApiError.js";
-
 const apiVersion = "/api/v1";
+
+// health check endpoint
+app.get(`${apiVersion}/health`, (req, res) => {
+    res.status(200).json(
+		new ApiResponse(200, "Momentum API is healthy")
+	)
+});
 
 app.use(`${apiVersion}/api-docs`, serve, setup(swaggerSpec));
 app.use(`${apiVersion}/auth`, authRouter);
@@ -62,6 +69,11 @@ app.use(`${apiVersion}/users`, userRouter);
 app.use(`${apiVersion}/admin/opportunities`, adminOpportunityRouter);
 app.use(`${apiVersion}/opportunities`, opportunityRouter);
 app.use(`${apiVersion}/bookmarks`, bookmarkRouter)
+
+// 404 middleware
+app.use((req, res, next) => {
+	next(new ApiError(404, "Route not found"));
+})
 
 app.use(errorHandler);
 

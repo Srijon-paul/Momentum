@@ -5,6 +5,7 @@ import { connectDB } from "./src/DB/prismaDb.config.js";
 import { gracefulShutdown } from "./src/utils/shutdown.js";
 
 dotenv.config({path: "./.env"});
+import "./src/utils/validateEnv.js";
 
 const port = process.env.PORT || 3400;
 

@@ -2,7 +2,12 @@ import logger from "../utils/logger.js";
 
 const errorHandler = (err, req, res, next) => {
 	const statusCode = err.statusCode || 500;
-	logger.error(err.stack);
+	logger.error(err.message, {
+		statusCode,
+		stack: err.stack,
+		path: req.originalUrl,
+		method: req.method
+	});
 
 	return res.status(statusCode).json({
 		success: false,
