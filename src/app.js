@@ -58,7 +58,7 @@ const apiVersion = "/api/v1";
 // health check endpoint
 app.get(`${apiVersion}/health`, (req, res) => {
     res.status(200).json(
-		new ApiResponse(200, "Momentum API is healthy")
+		new ApiResponse(200, {}, "Momentum API is healthy")
 	)
 });
 
@@ -72,6 +72,9 @@ app.use(`${apiVersion}/bookmarks`, bookmarkRouter)
 
 // 404 middleware
 app.use((req, res, next) => {
+	if (req.originalUrl === "/favicon.ico") {
+        return res.sendStatus(204); // No Content
+    }
 	next(new ApiError(404, "Route not found"));
 })
 

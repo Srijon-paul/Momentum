@@ -1,5 +1,5 @@
 const requiredEnv = [
-    "DATABASE_URL",
+	"DATABASE_URL",
 	"CORS_ORIGINS",
 	"NODE_ENV",
 	"ACCESS_TOKEN_SECRET",
@@ -8,8 +8,12 @@ const requiredEnv = [
 	"REFRESH_TOKEN_EXPIRY",
 ];
 
-for (const variable of requiredEnv) {
-    if (!process.env[variable]) {
-        throw new Error(`Missing environment variable: ${variable}`);
-    }
+const validateEnv = () => {
+	for (const variable of requiredEnv) {
+		if (!process.env[variable]) {
+			throw new Error(`Missing environment variable: ${variable}`);
+		}
+	}
 }
+
+export { validateEnv };

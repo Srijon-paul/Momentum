@@ -17,6 +17,7 @@ const gracefulShutdown = async(server, reason = 'Unknown') => {
 			message: error.message,
 			stack: error.stack
 		});
+		process.exit(1);
 	}
 }
 

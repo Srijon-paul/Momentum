@@ -3,16 +3,23 @@ import dotenv from "dotenv";
 import logger from "./src/utils/logger.js";
 import { connectDB } from "./src/DB/prismaDb.config.js";
 import { gracefulShutdown } from "./src/utils/shutdown.js";
+import { validateEnv } from "./src/utils/validateEnv.js";
 
 dotenv.config({path: "./.env"});
-import "./src/utils/validateEnv.js";
-
-const port = process.env.PORT || 3400;
-
-await connectDB();
-const server = app.listen(port, () => {
-	logger.info(`server is listening on port: ${port}`);
-});
+let server;
+try {
+    validateEnv();
+    
+    const port = process.env.PORT || 3400;
+    
+    await connectDB();
+    server = app.listen(port, () => {
+    	logger.info(`server is listening on port: ${port}`);
+    });
+} catch (error) {
+    logger.error(error.message);
+    process.exit(1);
+}
 
 process.on("uncaughtException", async(reason) => {
 	logger.error("Uncaught Exception", {
