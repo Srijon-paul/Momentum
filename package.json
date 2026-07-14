@@ -16,7 +16,8 @@
     "dev": "nodemon index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
-    "seed": "prisma db seed"
+    "seed": "prisma db seed",
+    "build": "npm install && prisma generate && prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
