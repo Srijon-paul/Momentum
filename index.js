@@ -4,6 +4,7 @@ import logger from "./src/utils/logger.js";
 import { connectDB } from "./src/DB/prismaDb.config.js";
 import { gracefulShutdown } from "./src/utils/shutdown.js";
 import { validateEnv } from "./src/utils/validateEnv.js";
+import { createAdmin } from "./src/utils/createAdmin.js";
 
 dotenv.config({path: "./.env"});
 let server;
@@ -13,6 +14,7 @@ try {
     const port = process.env.PORT || 3400;
     
     await connectDB();
+    await createAdmin
     server = app.listen(port, () => {
     	logger.info(`server is listening on port: ${port}`);
     });

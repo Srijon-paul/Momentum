@@ -14,7 +14,7 @@ const options = {
 				description: "Development server"
 			},
 			{
-				url: "http://localhost:5000/api/v1/",
+				url: "https://momentum-oi7v.onrender.com/api/v1/",
 				description: "Production server"
 			}
 		],

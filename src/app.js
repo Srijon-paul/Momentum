@@ -37,6 +37,8 @@ app.use(cors({
 	maxAge: 86400 // pre-flight requests are cached for 24hours to reduce unnecessary traffic
 }));
 
+app.set("trust proxy", 1);
+
 app.use(speedLimiter);
 app.use(globalLimiter);
 
