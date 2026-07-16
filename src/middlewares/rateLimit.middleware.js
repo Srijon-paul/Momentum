@@ -1,5 +1,6 @@
 import { rateLimit } from "express-rate-limit";
 import { ApiError } from "../utils/ApiError.js";
+import logger from "../utils/logger.js";
 
 const createLimiter = (windowMs, limit, message) => {
 	return rateLimit({
