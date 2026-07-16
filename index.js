@@ -14,7 +14,7 @@ try {
     const port = process.env.PORT || 3400;
     
     await connectDB();
-    await createAdmin
+    await createAdmin();
     server = app.listen(port, () => {
     	logger.info(`server is listening on port: ${port}`);
     });

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import { prisma } from "../src/DB/prismaDb.config.js";
-import logger from "../src/utils/logger.js";
+import { prisma } from "../DB/prismaDb.config.js";
+import logger from "./logger.js";
 
 const createAdmin = async() => {
 	logger.info("Trying to create Admin...")
