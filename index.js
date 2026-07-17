@@ -4,7 +4,7 @@ import logger from "./src/utils/logger.js";
 import { connectDB } from "./src/DB/prismaDb.config.js";
 import { gracefulShutdown } from "./src/utils/shutdown.js";
 import { validateEnv } from "./src/utils/validateEnv.js";
-import { createAdmin } from "./src/utils/createAdmin.js";
+import { createAdmin } from "./prisma/createAdmin.js";
 
 dotenv.config({path: "./.env"});
 let server;

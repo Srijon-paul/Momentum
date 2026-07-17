@@ -1,13 +1,17 @@
 {
   "name": "momentum",
   "version": "1.0.0",
-  "description": "an opportunity discovery platform for students",
+  "description": "Production-ready REST API for an opportunity discovery platform built with Express.js, Prisma, PostgreSQL and JWT authentication.",
   "keywords": [
     "momentum",
-    "student-hub",
-    "srijon-paul"
+    "opportunity-platform",
+    "express",
+    "postgresql",
+    "backend",
+    "prisma",
+    "node.js"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "author": "Srijon Paul",
   "type": "module",
   "main": "index.js",
@@ -16,8 +20,12 @@
     "dev": "nodemon index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
+    "prisma:studio": "prisma studio",
     "seed": "prisma db seed",
     "build": "npm install && prisma generate && prisma migrate deploy"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
