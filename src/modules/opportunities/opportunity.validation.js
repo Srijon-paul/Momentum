@@ -1,227 +1,203 @@
 import { z } from "zod";
 
-const opportunityTypes = [
-	"INTERNSHIP",
-	"SCHOLARSHIP",
-	"HACKATHON",
-	"COMPETITION",
-	"WORKSHOP"
-];
+const opportunityTypes = ["INTERNSHIP", "SCHOLARSHIP", "HACKATHON", "COMPETITION", "WORKSHOP"];
 
-const opportunityStatuses = [
-	"OPEN",
-	"CLOSED"
-];
+const opportunityStatuses = ["OPEN", "CLOSED"];
 
 const parseSimpleDate = (value) => {
-	const match = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    const match = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
 
-	if (!match) {
-		return { ok: false, message: "Date must be in DD/MM/YYYY format" };
-	}
+    if (!match) {
+        return { ok: false, message: "Date must be in DD/MM/YYYY format" };
+    }
 
-	const day = Number(match[1]);
-	const month = Number(match[2]);
-	const year = Number(match[3]);
-	const parsedDate = new Date(year, month - 1, day);
+    const day = Number(match[1]);
+    const month = Number(match[2]);
+    const year = Number(match[3]);
+    const parsedDate = new Date(year, month - 1, day);
 
-	if (
-		parsedDate.getFullYear() !== year ||
-		parsedDate.getMonth() !== month - 1 ||
-		parsedDate.getDate() !== day
-	) {
-		return { ok: false, message: "Invalid date" };
-	}
+    if (
+        parsedDate.getFullYear() !== year ||
+        parsedDate.getMonth() !== month - 1 ||
+        parsedDate.getDate() !== day
+    ) {
+        return { ok: false, message: "Invalid date" };
+    }
 
-	return { ok: true, value: parsedDate };
+    return { ok: true, value: parsedDate };
 };
 
-const simpleDateSchema = z.string()
-	.trim()
-	.superRefine((value, ctx) => {
-		const parsed = parseSimpleDate(value);
+const simpleDateSchema = z
+    .string()
+    .trim()
+    .superRefine((value, ctx) => {
+        const parsed = parseSimpleDate(value);
 
-		if (!parsed.ok) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: parsed.message
-			});
-		}
-	})
-	.transform((value) => {
-		const parsed = parseSimpleDate(value);
-		return parsed.value;
-	});
+        if (!parsed.ok) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: parsed.message
+            });
+        }
+    })
+    .transform((value) => {
+        const parsed = parseSimpleDate(value);
+        return parsed.value;
+    });
 
-const createOpportunitySchema = z.object({
-	title: z.string()
-		.trim()
-		.min(3, "Title must be at least 3 characters long")
-		.max(150, "Title cannot exceed 150 characters"),
+const createOpportunitySchema = z
+    .object({
+        title: z
+            .string()
+            .trim()
+            .min(3, "Title must be at least 3 characters long")
+            .max(150, "Title cannot exceed 150 characters"),
 
-	description: z.string()
-		.trim()
-		.min(20, "Description must be at least 20 characters long")
-		.max(5000, "Description cannot exceed 5000 characters"),
+        description: z
+            .string()
+            .trim()
+            .min(20, "Description must be at least 20 characters long")
+            .max(5000, "Description cannot exceed 5000 characters"),
 
-	organization: z.string()
-		.trim()
-		.min(2, "Organization name must be at least 2 characters long")
-		.max(100, "Organization name cannot exceed 100 characters"),
+        organization: z
+            .string()
+            .trim()
+            .min(2, "Organization name must be at least 2 characters long")
+            .max(100, "Organization name cannot exceed 100 characters"),
 
-	type: z.enum(opportunityTypes, {
-		message: "Invalid opportunity type"
-	}),
+        type: z.enum(opportunityTypes, {
+            message: "Invalid opportunity type"
+        }),
 
-	status: z.enum(opportunityStatuses, {
-		message: "Invalid opportunity status"
-	}).optional(),
+        status: z
+            .enum(opportunityStatuses, {
+                message: "Invalid opportunity status"
+            })
+            .optional(),
 
-	location: z.string()
-		.trim()
-		.max(100, "Location cannot exceed 100 characters")
-		.nullable()
-		.optional(),
+        location: z
+            .string()
+            .trim()
+            .max(100, "Location cannot exceed 100 characters")
+            .nullable()
+            .optional(),
 
-	apply_url: z.url("Invalid application link"),
+        apply_url: z.url("Invalid application link"),
 
-	start_date: simpleDateSchema
-		.optional(),
+        start_date: simpleDateSchema.optional(),
 
-	deadline: simpleDateSchema
-}).refine(
-	(data) => {
-		if (!data.start_date || !data.deadline) return true;
-		return data.deadline > data.start_date;
-	},
-	{
-		message: "Deadline must be after start date",
-		path: ["deadline"]
-	}
-).refine(
-	(data) => {
-		if (!data.deadline) return true;
-		const today = new Date();
-		today.setHours(0, 0, 0, 0);
-		return data.deadline >= today;
-	},
-	{
-		message: "Deadline cannot be in the past",
-		path: ["deadline"]
-	}
-).refine(
-	(data) => {
-		if (!data.start_date) return true;
-		const today = new Date();
-		today.setHours(0, 0, 0, 0);
-		return data.start_date >= today;
-	},
-	{
-		message: "Start date cannot be in the past",
-		path: ["start_date"]
-	}
-);
+        deadline: simpleDateSchema
+    })
+    .refine(
+        (data) => {
+            if (!data.start_date || !data.deadline) return true;
+            return data.deadline > data.start_date;
+        },
+        {
+            message: "Deadline must be after start date",
+            path: ["deadline"]
+        }
+    )
+    .refine(
+        (data) => {
+            if (!data.deadline) return true;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return data.deadline >= today;
+        },
+        {
+            message: "Deadline cannot be in the past",
+            path: ["deadline"]
+        }
+    )
+    .refine(
+        (data) => {
+            if (!data.start_date) return true;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return data.start_date >= today;
+        },
+        {
+            message: "Start date cannot be in the past",
+            path: ["start_date"]
+        }
+    );
 
-const updateOpportunitySchema = z.object({
-	title: z.string()
-		.trim()
-		.min(3)
-		.max(150)
-		.optional(),
+const updateOpportunitySchema = z
+    .object({
+        title: z.string().trim().min(3).max(150).optional(),
 
-	description: z.string()
-		.trim()
-		.min(20)
-		.max(5000)
-		.optional(),
+        description: z.string().trim().min(20).max(5000).optional(),
 
-	organization: z.string()
-		.trim()
-		.min(2)
-		.max(100)
-		.optional(),
+        organization: z.string().trim().min(2).max(100).optional(),
 
-	type: z.enum(opportunityTypes).optional(),
+        type: z.enum(opportunityTypes).optional(),
 
-	status: z.enum(opportunityStatuses).optional(),
+        status: z.enum(opportunityStatuses).optional(),
 
-	location: z.string()
-		.trim()
-		.max(100)
-		.optional(),
+        location: z.string().trim().max(100).optional(),
 
-	apply_url: z.url()
-		.optional(),
+        apply_url: z.url().optional(),
 
-	start_date: simpleDateSchema
-		.optional(),
+        start_date: simpleDateSchema.optional(),
 
-	deadline: simpleDateSchema
-		.optional()
-}).partial()
-	.refine(
-		(data) => {
-			if (!data.start_date || !data.deadline) return true;
-			return data.deadline > data.start_date;
-		},
-		{
-			message: "Deadline must be after start date",
-			path: ["deadline"]
-		}
-	).refine(
-		(data) => {
-			if (!data.deadline) return true;
-			const today = new Date();
-			today.setHours(0, 0, 0, 0);
-			return data.deadline >= today;
-		},
-		{
-			message: "Deadline cannot be in the past",
-			path: ["deadline"]
-		}
-	).refine(
-		(data) => {
-			if (!data.start_date) return true;
-			const today = new Date();
-			today.setHours(0, 0, 0, 0);
-			return data.start_date >= today;
-		},
-		{
-			message: "Start date cannot be in the past",
-			path: ["start_date"]
-		}
-	);
+        deadline: simpleDateSchema.optional()
+    })
+    .partial()
+    .refine(
+        (data) => {
+            if (!data.start_date || !data.deadline) return true;
+            return data.deadline > data.start_date;
+        },
+        {
+            message: "Deadline must be after start date",
+            path: ["deadline"]
+        }
+    )
+    .refine(
+        (data) => {
+            if (!data.deadline) return true;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return data.deadline >= today;
+        },
+        {
+            message: "Deadline cannot be in the past",
+            path: ["deadline"]
+        }
+    )
+    .refine(
+        (data) => {
+            if (!data.start_date) return true;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return data.start_date >= today;
+        },
+        {
+            message: "Start date cannot be in the past",
+            path: ["start_date"]
+        }
+    );
 
 const getAllOpportunitiesSchema = z.object({
-	page: z.coerce.number()
-		.int()
-		.min(1)
-		.default(1),
+    page: z.coerce.number().int().min(1).default(1),
 
-	limit: z.coerce.number()
-		.int()
-		.min(1)
-		.max(50)
-		.default(5),
+    limit: z.coerce.number().int().min(1).max(50).default(5),
 
-	search: z.string()
-		.trim()
-		.optional(),
+    search: z.string().trim().optional(),
 
-	type: z.enum(opportunityTypes)
-		.optional(),
+    type: z.enum(opportunityTypes).optional(),
 
-	status: z.enum(opportunityStatuses)
-		.optional()
+    status: z.enum(opportunityStatuses).optional()
 });
 
 const opportunityIdSchema = z.object({
-	id: z.uuid("Invalid opportunity id")
+    id: z.uuid("Invalid opportunity id")
 });
 
 export {
-	createOpportunitySchema,
-	updateOpportunitySchema,
-	getAllOpportunitiesSchema,
-	opportunityIdSchema
-}
+    createOpportunitySchema,
+    updateOpportunitySchema,
+    getAllOpportunitiesSchema,
+    opportunityIdSchema
+};

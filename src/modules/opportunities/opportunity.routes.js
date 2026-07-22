@@ -2,8 +2,19 @@ import { Router } from "express";
 import { verifyJWT } from "../../middlewares/auth.middleware.js";
 import { authorize } from "../../middlewares/authorize.middleware.js";
 import validate from "../../middlewares/validate.middleware.js";
-import { createOpportunitySchema, getAllOpportunitiesSchema, opportunityIdSchema, updateOpportunitySchema } from "./opportunity.validation.js";
-import { createOpportunityControl, deleteOpportunityControl, getAllOpportunityControl, getOpportunityByIdControl, updateOpportunityControl } from "./opportunity.controller.js";
+import {
+    createOpportunitySchema,
+    getAllOpportunitiesSchema,
+    opportunityIdSchema,
+    updateOpportunitySchema
+} from "./opportunity.validation.js";
+import {
+    createOpportunityControl,
+    deleteOpportunityControl,
+    getAllOpportunityControl,
+    getOpportunityByIdControl,
+    updateOpportunityControl
+} from "./opportunity.controller.js";
 import { adminLimiter, readLimiter } from "../../middlewares/rateLimit.middleware.js";
 
 const opportunityRouter = Router();
@@ -50,7 +61,15 @@ const adminOpportunityRouter = Router();
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-adminOpportunityRouter.route("/").post(verifyJWT, authorize("ADMIN"), adminLimiter, validate(createOpportunitySchema), createOpportunityControl);
+adminOpportunityRouter
+    .route("/")
+    .post(
+        verifyJWT,
+        authorize("ADMIN"),
+        adminLimiter,
+        validate(createOpportunitySchema),
+        createOpportunityControl
+    );
 
 /**
  * @swagger
@@ -103,7 +122,16 @@ adminOpportunityRouter.route("/").post(verifyJWT, authorize("ADMIN"), adminLimit
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-adminOpportunityRouter.route("/:id").patch(verifyJWT, authorize("ADMIN"), adminLimiter, validate(opportunityIdSchema), validate(updateOpportunitySchema), updateOpportunityControl);
+adminOpportunityRouter
+    .route("/:id")
+    .patch(
+        verifyJWT,
+        authorize("ADMIN"),
+        adminLimiter,
+        validate(opportunityIdSchema),
+        validate(updateOpportunitySchema),
+        updateOpportunityControl
+    );
 
 /**
  * @swagger
@@ -148,7 +176,15 @@ adminOpportunityRouter.route("/:id").patch(verifyJWT, authorize("ADMIN"), adminL
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-adminOpportunityRouter.route("/:id").delete(verifyJWT, authorize("ADMIN"), adminLimiter, validate(opportunityIdSchema), deleteOpportunityControl);
+adminOpportunityRouter
+    .route("/:id")
+    .delete(
+        verifyJWT,
+        authorize("ADMIN"),
+        adminLimiter,
+        validate(opportunityIdSchema),
+        deleteOpportunityControl
+    );
 
 /**
  * @swagger
@@ -227,7 +263,9 @@ adminOpportunityRouter.route("/:id").delete(verifyJWT, authorize("ADMIN"), admin
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-opportunityRouter.route("/").get(verifyJWT, readLimiter, validate(getAllOpportunitiesSchema), getAllOpportunityControl);
+opportunityRouter
+    .route("/")
+    .get(verifyJWT, readLimiter, validate(getAllOpportunitiesSchema), getAllOpportunityControl);
 
 /**
  * @swagger
@@ -272,9 +310,8 @@ opportunityRouter.route("/").get(verifyJWT, readLimiter, validate(getAllOpportun
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-opportunityRouter.route("/:id").get(verifyJWT, readLimiter, validate(opportunityIdSchema), getOpportunityByIdControl);
+opportunityRouter
+    .route("/:id")
+    .get(verifyJWT, readLimiter, validate(opportunityIdSchema), getOpportunityByIdControl);
 
-export {
-	opportunityRouter,
-	adminOpportunityRouter
-}
+export { opportunityRouter, adminOpportunityRouter };

@@ -2,7 +2,11 @@ import { Router } from "express";
 import { verifyJWT } from "../../middlewares/auth.middleware.js";
 import validate from "../../middlewares/validate.middleware.js";
 import { bookmarkSchema } from "./bookmark.validation.js";
-import { addBookmarkControl, getAllBookmarksControl, removeBookmarkControl } from "./bookmark.controller.js";
+import {
+    addBookmarkControl,
+    getAllBookmarksControl,
+    removeBookmarkControl
+} from "./bookmark.controller.js";
 import { readLimiter, writeLimiter } from "../../middlewares/rateLimit.middleware.js";
 
 const bookmarkRouter = Router();
@@ -56,7 +60,9 @@ const bookmarkRouter = Router();
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-bookmarkRouter.route("/:opportunityId").post(verifyJWT, writeLimiter, validate(bookmarkSchema), addBookmarkControl);
+bookmarkRouter
+    .route("/:opportunityId")
+    .post(verifyJWT, writeLimiter, validate(bookmarkSchema), addBookmarkControl);
 
 /**
  * @swagger
@@ -136,6 +142,8 @@ bookmarkRouter.route("/").get(verifyJWT, readLimiter, getAllBookmarksControl);
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-bookmarkRouter.route("/:opportunityId").delete(verifyJWT, writeLimiter, validate(bookmarkSchema), removeBookmarkControl);
+bookmarkRouter
+    .route("/:opportunityId")
+    .delete(verifyJWT, writeLimiter, validate(bookmarkSchema), removeBookmarkControl);
 
 export default bookmarkRouter;

@@ -14,9 +14,17 @@ const validate = (schema) => {
             const combinedCandidate = { body: payload, params: req.params, query: req.query };
             const mergedCandidate = { ...payload, params: req.params, query: req.query };
 
-            const candidates = req.method === "GET"
-                ? [req.query, req.params, payload, req.body, combinedCandidate, mergedCandidate]
-                : [payload, req.body, req.params, req.query, combinedCandidate, mergedCandidate];
+            const candidates =
+                req.method === "GET"
+                    ? [req.query, req.params, payload, req.body, combinedCandidate, mergedCandidate]
+                    : [
+                          payload,
+                          req.body,
+                          req.params,
+                          req.query,
+                          combinedCandidate,
+                          mergedCandidate
+                      ];
 
             let lastError = null;
 
@@ -48,10 +56,11 @@ const validate = (schema) => {
             return res.status(400).json({
                 success: false,
                 message: "Validation failed",
-                errors: error.issues?.map((issue) => ({
-                    path: issue.path.join("."),
-                    message: issue.message
-                })) || []
+                errors:
+                    error.issues?.map((issue) => ({
+                        path: issue.path.join("."),
+                        message: issue.message
+                    })) || []
             });
         }
     };

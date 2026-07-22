@@ -79,6 +79,8 @@ userRouter.route("/profile").get(verifyJWT, readLimiter, getCurrentUserControl);
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-userRouter.route("/profile").patch(verifyJWT, writeLimiter, validate(updateUserProfileSchema), updateUserProfile);
+userRouter
+    .route("/profile")
+    .patch(verifyJWT, writeLimiter, validate(updateUserProfileSchema), updateUserProfile);
 
 export default userRouter;

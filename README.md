@@ -6,6 +6,10 @@ Built with scalability, security, and maintainability in mind using Node.js, Exp
 
 ---
 
+## Live Deployment
+ Health Check : https://momentum-oi7v.onrender.com/api/v1/health 
+ Swagger Docs : https://momentum-oi7v.onrender.com/api/v1/api-docs 
+
 ## Features
 
 - User Registration and Login
@@ -94,7 +98,7 @@ Momentum/
 │   │   │	├── auth.service.js
 │   │   │	├── auth.routes.js
 │   │   │	└── auth.validation.js
-│	│	│	
+│	│	│
 │   │   ├── users/
 │   │   ├── opportunities/
 │   │   ├── bookmarks/
@@ -185,10 +189,10 @@ LOG_LEVEL=
 
 ACCESS_TOKEN_SECRET=
 ACCESS_TOKEN_EXPIRY=
-ACCESS_COOKIE_AGE= 
+ACCESS_COOKIE_AGE=
 REFRESH_TOKEN_SECRET=
 REFRESH_TOKEN_EXPIRY=
-REFRESH_COOKIE_AGE= 
+REFRESH_COOKIE_AGE=
 ADMIN_NAME=
 ADMIN_EMAIL=
 ADMIN_PASSWORD=
@@ -215,7 +219,7 @@ Swagger documentation is available after starting the server.
 http://localhost:4600/api-docs
 ```
 
-*(Update the port if different.)*
+_(Update the port if different.)_
 
 ---
 
@@ -241,9 +245,9 @@ Momentum uses JWT-based authentication.
 
 ```json
 {
-  "success": true,
-  "data": {},
-  "message": "Operation completed successfully"
+    "success": true,
+    "data": {},
+    "message": "Operation completed successfully"
 }
 ```
 
@@ -251,9 +255,9 @@ Momentum uses JWT-based authentication.
 
 ```json
 {
-  "success": false,
-  "message": "Unauthorized",
-  "errors": []
+    "success": false,
+    "message": "Unauthorized",
+    "errors": []
 }
 ```
 
